@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: app
+    build: ./
+    ports:
+      - 3000:3000
+    env_file:
+      - secrets.env
+    depends_on:
+      - db
+      - nats
+
+  db:
+    image: postgres:15
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    ports:
+      - 5432:5432
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=prr133f
+      - POSTGRES_PASSWORD=123arra321
+      - POSTGRES_DB=l0
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    
+  nats:
+    image: nats
+    ports:
+      - 8222:8222
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222"
+
+volumes:
+  database_postgres:
+
+networks:
+  default:
+    driver: bridge
