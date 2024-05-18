@@ -11,6 +11,6 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /build /app
+COPY --from=builder /build/main /app
 
-CMD [ ". /main" ]
+CMD [ "./main" ]

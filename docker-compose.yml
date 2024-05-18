@@ -9,8 +9,10 @@ services:
     env_file:
       - secrets.env
     depends_on:
-      - db
       - nats
+      - db
+    networks:
+      - app_network
 
   db:
     image: postgres:15
@@ -24,16 +26,26 @@ services:
       - POSTGRES_DB=l0
     volumes:
       - database_postgres:/var/lib/postgresql/data
+    networks:
+      - app_network
     
   nats:
     image: nats
+    expose:
+      - 8222
     ports:
+      - 4222:4222
       - 8222:8222
-    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222"
+    command: ["-js", "--server_name", "test", "--http_port", "8222"]
+    environment:
+      - NATS_USER=local
+      - NATS_PASSWORD=9t5lIAFKJXY2nr5C524HgGsQjNStoplG
+    networks:
+      - app_network
 
 volumes:
   database_postgres:
 
 networks:
-  default:
+  app_network:
     driver: bridge
