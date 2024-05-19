@@ -29,6 +29,8 @@ func main() {
 
 	routes.InitRouter(app, logger, pg)
 
-	logger.Fatal("NATS listener is crashed", zap.Error(nats.Listen()))
+	if err := nats.Listen(); err != nil {
+		logger.Fatal("NATS is crashed", zap.Error(err))
+	}
 	logger.Fatal("App is crashed", zap.Error(app.Listen(fmt.Sprintf(":%s", os.Getenv("APP_PORT")))))
 }
