@@ -2,6 +2,7 @@ package broker
 
 import (
 	"github.com/nats-io/nats.go"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -9,11 +10,19 @@ func (b *Broker) Listen() error {
 	js, err := b.NATS.JetStream()
 	if err != nil {
 		b.Log.Error("Unable to create JetStream context", zap.Error(err))
-		return err
+		return errors.WithStack(err)
 	}
 
 	js.Subscribe("l0.*", func(m *nats.Msg) {
 		b.Log.Info("Message received", zap.String("subject", m.Subject), zap.ByteString("data", m.Data))
+
+		uid, err := b.SaveToDB(m)
+		if err != nil {
+			b.Log.Error("Unable to save data", zap.Error(err))
+			return
+		}
+
+		b.Cache.Set(uid, m.Data)
 	}, nats.Durable("app"))
 
 	return nil
