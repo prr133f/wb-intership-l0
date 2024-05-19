@@ -28,6 +28,25 @@ services:
       - database_postgres:/var/lib/postgresql/data
     networks:
       - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+    container_name: migrate
+    command: ["up"]
+    env_file:
+      - secrets.env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app_network
     
   nats:
     image: nats
