@@ -14,7 +14,7 @@ type Domain struct {
 	Cache    cache.IFace
 }
 
-func NewDomain(log *zap.Logger, db database.IFace, cache cache.IFace) *Domain {
+func NewDomain(log *zap.Logger, db database.IFace, cache cache.IFace) IFace {
 	return &Domain{
 		Log:      log,
 		Database: db,

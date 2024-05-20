@@ -16,7 +16,12 @@ type Broker struct {
 	Cache cache.IFace
 }
 
-func NewBroker(dsn string, log *zap.Logger, db database.IFace, cache cache.IFace) *Broker {
+type IFace interface {
+	Listen() error
+	SaveToDB(msg *nats.Msg) (string, error)
+}
+
+func NewBroker(dsn string, log *zap.Logger, db database.IFace, cache cache.IFace) IFace {
 	var (
 		natsInstance *Broker
 		natsOnce     sync.Once
