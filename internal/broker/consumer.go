@@ -21,8 +21,8 @@ func (b *Broker) Listen() error {
 	if _, err = js.Subscribe("l0.*", func(m *nats.Msg) {
 		b.Log.Info("Message received", zap.String("subject", m.Subject), zap.ByteString("data", m.Data))
 
-		uid, subErr := b.SaveToDB(m) // TODO: Отлошить ошибку pkey и не записывать в кэш
-		if subErr != nil {
+		uid, err := b.SaveToDB(m) // TODO: Отловить ошибку pkey и не записывать в кэш
+		if err != nil {
 			b.Log.Error("Unable to save data", zap.Error(err))
 			return
 		}

@@ -9,7 +9,7 @@ import (
 )
 
 func (db *Database) SetData(orderUID string, data json.RawMessage) error {
-	if _, err := db.PG.DB.Query(context.Background(), `
+	if _, err := db.PG.DB.Exec(context.Background(), `
 	INSERT INTO data_schema.data(OrderUID, Data)
 	VALUES ($1, $2)`, orderUID, data); err != nil {
 		db.Log.Error("Unable to set data", zap.Error(err))

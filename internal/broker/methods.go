@@ -16,11 +16,9 @@ func (b *Broker) SaveToDB(msg *nats.Msg) (string, error) {
 		return "", errors.WithStack(err)
 	}
 
-	// TODO: Add JSON validator
-
-	if marshalledData["order_uid"] == nil {
-		b.Log.Error("No order_uid in message", zap.String("subject", msg.Subject), zap.ByteString("data", msg.Data))
-		return "", errors.New("no order_uid in message")
+	if err := validateData(marshalledData); err != nil {
+		b.Log.Error("Unable to validate data", zap.Error(err))
+		return "", errors.WithStack(err)
 	}
 
 	err = b.DB.SetData(marshalledData["order_uid"].(string), msg.Data)
@@ -30,4 +28,12 @@ func (b *Broker) SaveToDB(msg *nats.Msg) (string, error) {
 	}
 
 	return marshalledData["order_uid"].(string), nil
+}
+
+func validateData(data map[string]any) error {
+	if data["order_uid"] == nil {
+		return errors.New("no order_uid in message")
+	}
+
+	return nil
 }

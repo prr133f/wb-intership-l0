@@ -344,3 +344,7 @@ issues:
         - gosec
         - noctx
         - wrapcheck
+        
+    - linters:
+        - govet
+      text: 'shadow: declaration of "err" shadows declaration at line'
