@@ -11,7 +11,7 @@ type Database struct {
 	PG  *Postgres
 }
 
-func NewDatabase(log *zap.Logger, db *Postgres) *Database {
+func NewDatabase(log *zap.Logger, db *Postgres) IFace {
 	return &Database{
 		Log: log,
 		PG:  db,

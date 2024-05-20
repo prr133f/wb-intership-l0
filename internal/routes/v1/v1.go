@@ -8,10 +8,10 @@ import (
 
 type Router struct {
 	App  *fiber.App
-	View *view.View
+	View view.IFace
 }
 
-func NewRouter(app *fiber.App, view *view.View) *Router {
+func NewRouter(app *fiber.App, view view.IFace) *Router {
 	return &Router{
 		App:  app,
 		View: view,
@@ -20,7 +20,7 @@ func NewRouter(app *fiber.App, view *view.View) *Router {
 
 type Route struct {
 	Group *fiber.Router
-	View  *view.View
+	View  view.IFace
 }
 
 func (r *Router) InitRoutes() {

@@ -11,7 +11,7 @@ type Item struct {
 	Value any
 }
 
-func NewCache() *Cache {
+func NewCache() IFace {
 	return &Cache{
 		Items: make(map[string]Item),
 	}

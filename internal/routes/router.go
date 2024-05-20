@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func InitRouter(app *fiber.App, logger *zap.Logger, pg *database.Postgres, cache *cache.Cache) {
+func InitRouter(app *fiber.App, logger *zap.Logger, pg *database.Postgres, cache cache.IFace) {
 	db := database.NewDatabase(logger, pg)
 	domain := domain.NewDomain(logger, db, cache)
 	view := view.NewView(logger, domain)
