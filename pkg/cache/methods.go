@@ -1,24 +1,6 @@
-package models
+package cache
 
-import (
-	"errors"
-	"sync"
-)
-
-type Cache struct {
-	sync.RWMutex
-	Items map[string]Item
-}
-
-type Item struct {
-	Value any
-}
-
-func NewCache() *Cache {
-	return &Cache{
-		Items: make(map[string]Item),
-	}
-}
+import "errors"
 
 func (c *Cache) Set(key string, value any) {
 	c.Lock()

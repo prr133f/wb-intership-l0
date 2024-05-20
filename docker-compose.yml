@@ -9,8 +9,12 @@ services:
     env_file:
       - secrets.env
     depends_on:
-      - db
       - nats
+      - db
+      - migrate
+    networks:
+      - app_network
+    restart: on-failure
 
   db:
     image: postgres:15
@@ -18,22 +22,48 @@ services:
     ports:
       - 5432:5432
     container_name: postgres
-    environment:
-      - POSTGRES_USER=prr133f
-      - POSTGRES_PASSWORD=123arra321
-      - POSTGRES_DB=l0
+    env_file:
+      - secrets.env
     volumes:
       - database_postgres:/var/lib/postgresql/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+    container_name: migrate
+    command: ["up"]
+    env_file:
+      - secrets.env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app_network
     
   nats:
     image: nats
+    expose:
+      - 8222
     ports:
+      - 4222:4222
       - 8222:8222
-    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222"
+    command: ["-js", "--server_name", "test", "--http_port", "8222"]
+    env_file:
+      - secrets.env
+    networks:
+      - app_network
 
 volumes:
   database_postgres:
 
 networks:
-  default:
+  app_network:
     driver: bridge
