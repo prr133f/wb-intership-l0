@@ -16,3 +16,9 @@ func NewCache() *Cache {
 		Items: make(map[string]Item),
 	}
 }
+
+type IFace interface {
+	Set(key string, value any)
+	Get(key string) (any, bool)
+	Delete(key string) error
+}
