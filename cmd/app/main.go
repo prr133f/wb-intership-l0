@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"l0/internal/broker"
 	"l0/internal/database"
+	"l0/internal/domain"
 	"l0/internal/routes"
 	"l0/pkg/cache"
 	"l0/pkg/logger"
@@ -30,6 +31,9 @@ func main() {
 	}))
 
 	routes.InitRouter(app, logger, pg, cache)
+	if err := domain.RestoreCache(database.NewDatabase(logger, pg), cache, logger); err != nil {
+		logger.Error("Unable to restore cache", zap.Error(err))
+	}
 
 	if err := nats.Listen(); err != nil {
 		logger.Error("Error in NATS", zap.Error(err))

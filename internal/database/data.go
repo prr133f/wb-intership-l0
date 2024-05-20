@@ -10,9 +10,9 @@ import (
 
 func (db *Database) SetData(orderUID string, data json.RawMessage) error {
 	if _, err := db.PG.DB.Query(context.Background(), `
-	INSERT INTO data_schema.data(order_uid, data)
+	INSERT INTO data_schema.data(OrderUID, Data)
 	VALUES ($1, $2)`, orderUID, data); err != nil {
-		db.Log.Error("Unable to insert data", zap.Error(err))
+		db.Log.Error("Unable to set data", zap.Error(err))
 		return errors.WithStack(err)
 	}
 

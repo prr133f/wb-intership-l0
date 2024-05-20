@@ -11,8 +11,10 @@ services:
     depends_on:
       - nats
       - db
+      - migrate
     networks:
       - app_network
+    restart: on-failure
 
   db:
     image: postgres:15
@@ -20,10 +22,8 @@ services:
     ports:
       - 5432:5432
     container_name: postgres
-    environment:
-      - POSTGRES_USER=prr133f
-      - POSTGRES_PASSWORD=123arra321
-      - POSTGRES_DB=l0
+    env_file:
+      - secrets.env
     volumes:
       - database_postgres:/var/lib/postgresql/data
     networks:
@@ -56,9 +56,8 @@ services:
       - 4222:4222
       - 8222:8222
     command: ["-js", "--server_name", "test", "--http_port", "8222"]
-    environment:
-      - NATS_USER=local
-      - NATS_PASSWORD=9t5lIAFKJXY2nr5C524HgGsQjNStoplG
+    env_file:
+      - secrets.env
     networks:
       - app_network
 

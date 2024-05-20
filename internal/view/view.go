@@ -8,15 +8,12 @@ import (
 
 type View struct {
 	Log    *zap.Logger
-	Domain *domain.Domain
+	Domain domain.IFace
 }
 
-func NewView(log *zap.Logger, domain *domain.Domain) *View {
+func NewView(log *zap.Logger, domain domain.IFace) *View {
 	return &View{
 		Log:    log,
 		Domain: domain,
 	}
-}
-
-type ViewIFace interface {
 }

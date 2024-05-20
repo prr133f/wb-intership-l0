@@ -12,20 +12,20 @@ import (
 type Broker struct {
 	Log   *zap.Logger
 	NATS  *nats.Conn
-	DB    *database.Database
-	Cache *cache.Cache
+	DB    database.IFace
+	Cache cache.IFace
 }
 
-var (
-	natsInstance *Broker
-	natsOnce     sync.Once
-)
+func NewBroker(dsn string, log *zap.Logger, db database.IFace, cache cache.IFace) *Broker {
+	var (
+		natsInstance *Broker
+		natsOnce     sync.Once
+	)
 
-func NewBroker(DSN string, log *zap.Logger, db *database.Database, cache *cache.Cache) *Broker {
 	natsOnce.Do(func() {
-		conn, err := nats.Connect(DSN)
+		conn, err := nats.Connect(dsn)
 		if err != nil {
-			log.Fatal("Unable to connect to NATS", zap.Error(err), zap.String("dsn", DSN))
+			log.Fatal("Unable to connect to NATS", zap.Error(err), zap.String("dsn", dsn))
 		}
 		natsInstance = &Broker{
 			Log:   log,

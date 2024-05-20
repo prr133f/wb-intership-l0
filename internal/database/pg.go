@@ -13,14 +13,14 @@ type Postgres struct {
 	DB  *pgxpool.Pool
 }
 
-var (
-	pgInstance *Postgres
-	pgOnce     sync.Once
-)
+func NewPostgres(ctx context.Context, dsn string, log *zap.Logger) *Postgres {
+	var (
+		pgInstance *Postgres
+		pgOnce     sync.Once
+	)
 
-func NewPostgres(ctx context.Context, DSN string, log *zap.Logger) *Postgres {
 	pgOnce.Do(func() {
-		db, err := pgxpool.New(ctx, DSN)
+		db, err := pgxpool.New(ctx, dsn)
 		if err != nil {
 			log.Fatal("Unable to connect to database", zap.Error(err))
 		}

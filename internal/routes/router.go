@@ -3,7 +3,7 @@ package routes
 import (
 	"l0/internal/database"
 	"l0/internal/domain"
-	v1 "l0/internal/routes/v1" //nolint
+	v1 "l0/internal/routes/v1"
 	"l0/internal/view"
 	"l0/pkg/cache"
 
